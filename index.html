@@ -17,7 +17,7 @@
             font-family: 'Helvetica Neue', Arial, 'Hiragino Sans', Meiryo, sans-serif;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* ← 中央寄せをやめる（上下切れ防止） */
+            align-items: flex-start;  /* 上揃え（上下切れ防止） */
             text-align: center;
             padding: 20px;
             box-sizing: border-box;
@@ -48,12 +48,15 @@
             margin-bottom: 20px;
         }
 
-        p { margin-bottom: 20px; line-height: 1.6; }
+        p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
 
-        /* 画像 + 回答欄ブロック */
+        /* --- 謎ブロック --- */
         .question-grid {
             display: grid;
-            grid-template-columns: 1fr; /* ← PCでも1列固定 */
+            grid-template-columns: 1fr; /* PCでも1列固定 */
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -72,7 +75,7 @@
             border: 1px solid #555;
         }
 
-        /* 回答欄を見やすく */
+        /* --- 回答欄 --- */
         input[type="text"] {
             width: 100%;
             padding: 12px;
@@ -82,20 +85,26 @@
             color: #000;
             font-size: 1em;
         }
-        input[type="text"]::placeholder { color:#666; }
+
+        input[type="text"]::placeholder {
+            color: #666;
+        }
 
         input[type="text"]:focus {
             outline: none;
             border-color: #00ffff;
-            box-shadow: 0 0 10px rgba(0,255,255,0.5);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
         }
 
+        /* --- ボタン --- */
         .btn {
+            display: inline-block;
             padding: 12px 30px;
             background: linear-gradient(45deg, #00ffff, #0077ff);
             color: #1a1a1a;
             font-size: 1.1em;
             font-weight: bold;
+            text-decoration: none;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -103,7 +112,7 @@
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,255,255,0.4);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
         }
 
         #feedback-message,
@@ -114,14 +123,17 @@
             min-height: 24px;
         }
 
+        /* --- 最終問題の画像 --- */
         #riddle-image {
             max-width: 80%;
             height: auto;
-            margin: 20px auto;
+            margin-top: 20px;
+            margin-bottom: 20px;
             border-radius: 5px;
             border: 1px solid #555;
         }
 
+        /* --- STEP1答えサマリー --- */
         #step1-answers-summary {
             background-color: #1f1f1f;
             border: 1px solid #444;
@@ -139,8 +151,12 @@
             padding: 8px;
             border-bottom: 1px solid #333;
         }
-        .summary-table th { color: #00ffff; }
+        .summary-table th {
+            color: #00ffff;
+            width: 25%;
+        }
 
+        /* --- ヒント --- */
         .hint-box {
             max-width: 90%;
             margin: 30px auto;
@@ -153,82 +169,119 @@
             padding: 10px;
             font-weight: bold;
             color: #00ffff;
+            list-style: none;
         }
-        .hint-box summary::before { content: "▶ "; }
-        .hint-box[open] summary::before { content: "▼ "; }
-
-        .hint-content {
-            padding: 15px;
+        .hint-box summary::-webkit-details-marker {
+            display: none;
+        }
+        .hint-box summary::before {
+            content: '▶ ';
+            font-size: 0.8em;
+        }
+        .hint-box[open] summary::before {
+            content: '▼ ';
+        }
+        .hint-box .hint-content {
+            padding: 0 15px 15px 15px;
             background-color: #1f1f1f;
             border-top: 1px dashed #555;
         }
 
-        .nested-hint-box summary { color:#f0ad4e; }
-        .nested-hint-box .hint-content {
-            padding: 10px;
+        .nested-hint-box {
+            margin-top: 15px;
             background-color: #111;
+            border: 1px solid #444;
+            border-radius: 4px;
+        }
+        .nested-hint-box summary {
+            color: #f0ad4e;
+            font-weight: normal;
+            font-size: 0.9em;
+        }
+        .nested-hint-box .hint-content {
             border-top: 1px solid #444;
             font-size: 0.9em;
         }
 
-        .hidden { display: none; }
+        .slack-btn {
+            background: linear-gradient(45deg, #4a154b, #36c5f0);
+            color: white;
+            font-weight: bold;
+        }
+
+        .slack-btn:hover {
+            box-shadow: 0 5px 15px rgba(54, 197, 240, 0.4);
+        }
+
+        .sparkle-text {
+            font-size: 2em;
+            font-weight: bold;
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ffdd77;
+                color: #fff;
+            }
+            50% {
+                text-shadow: 0 0 20px #ffdd77, 0 0 30px #ffdd77, 0 0 40px #ffdd77;
+                color: #ffdd77;
+            }
+        }
+
+        .hidden { display:none; }
+
+        @media (max-width: 768px) {
+            body { align-items: flex-start; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
 
-    <!-- ------------ STEP 1 ------------- -->
+    <!-- ===== STEP1: 7つの謎 ===== -->
     <div id="step1">
         <h1>リアル脱出ゲームサークルからの挑戦状</h1>
-        <p>7つの謎を解き明かし、答えを入力せよ。<br>
-        ※答えはすべて<strong>ひらがな</strong> を入力してください。</p>
+        <p>7つの謎を解き明かし、答えを入力せよ。<br>※答えはすべて<strong>ひらがな</strong> を入力してください。</p>
 
         <div class="question-grid">
-
             <div class="question-item">
-                <img class="riddle-img" src="images/q1.png">
-                <input type="text" id="q1" placeholder="入力してください…">
+                <img class="riddle-img" src="images/q1.png" alt="謎1の画像">
+                <input type="text" id="q1" name="q1" placeholder="入力してください…">
             </div>
-
             <div class="question-item">
-                <img class="riddle-img" src="images/q2.png">
-                <input type="text" id="q2" placeholder="入力してください…">
+                <img class="riddle-img" src="images/q2.png" alt="謎2の画像">
+                <input type="text" id="q2" name="q2" placeholder="入力してください…">
             </div>
-
             <div class="question-item">
-                <img class="riddle-img" src="images/q3.png">
-                <input type="text" id="q3" placeholder="入力してください…">
+                <img class="riddle-img" src="images/q3.png" alt="謎3の画像">
+                <input type="text" id="q3" name="q3" placeholder="入力してください…">
             </div>
-
             <div class="question-item">
-                <img class="riddle-img" src="images/q4.png">
-                <input type="text" id="q4" placeholder="入力してください…">
+                <img class="riddle-img" src="images/q4.png" alt="謎4の画像">
+                <input type="text" id="q4" name="q4" placeholder="入力してください…">
             </div>
-
             <div class="question-item">
-                <img class="riddle-img" src="images/q5.png">
-                <input type="text" id="q5" placeholder="入力してください…">
+                <img class="riddle-img" src="images/q5.png" alt="謎5の画像">
+                <input type="text" id="q5" name="q5" placeholder="入力してください…">
             </div>
-
             <div class="question-item">
-                <img class="riddle-img" src="images/q6.png">
-                <input type="text" id="q6" placeholder="入力してください…">
+                <img class="riddle-img" src="images/q6.png" alt="謎6の画像">
+                <input type="text" id="q6" name="q6" placeholder="入力してください…">
             </div>
-
             <div class="question-item">
-                <img class="riddle-img" src="images/q7.png">
-                <input type="text" id="q7" placeholder="入力してください…">
+                <img class="riddle-img" src="images/q7.png" alt="謎7の画像">
+                <input type="text" id="q7" name="q7" placeholder="入力してください…">
             </div>
-
         </div>
 
         <button id="check-step1" class="btn">回答を送信</button>
         <div id="feedback-message"></div>
     </div>
 
-
-    <!-- ------------ STEP 2 ------------- -->
+    <!-- ===== STEP2: 最終問題（最初は非表示、正解後に下に出る） ===== -->
     <div id="step2" class="hidden">
         <h1>最終問題</h1>
 
@@ -237,60 +290,49 @@
         <h3>最後の謎</h3>
         <p>この画像と7つの謎の答えを元に、最後のキーワードを導き出せ。</p>
 
-        <!-- ★ここをパターン1に変更 -->
         <img id="riddle-image" src="images/last.png" alt="謎の画像">
 
         <details class="hint-box">
             <summary>ヒント</summary>
             <div class="hint-content">
-                <p>色の違った○をどこかで見たことはないだろうか？7つの謎をもう一度見てみよう。</p>
+                <p>色の違った○をどこかでみたことはないだろうか？7つの謎をもう一度みてみよう。</p>
                 <details class="nested-hint-box">
                     <summary>さらにヒント</summary>
                     <div class="hint-content">
-                        <p>丸の中の数字は何個目かを表している。最初の言葉は「み」。</p>
+                        <p>丸の中の数字は何個目かを表している。最初の言葉は「み」</p>
                     </div>
                 </details>
             </div>
         </details>
-
-        <div class="question-item" style="max-width:300px; margin:20px auto;">
+        
+        <div class="question-item" style="max-width: 300px; margin: 0 auto 30px auto;">
             <label for="final-q">最後のキーワード</label>
-            <input type="text" id="final-q" placeholder="入力してください…">
+            <input type="text" id="final-q" name="final-q" placeholder="入力してください…">
         </div>
-
         <button id="check-step2" class="btn">最終回答</button>
         <div id="final-feedback-message"></div>
     </div>
 
-
-    <!-- ------------ STEP 3 ------------- -->
+    <!-- ===== STEP3: クリア画面 ===== -->
     <div id="step3" class="hidden">
         <h1>CLEAR!</h1>
-        <p>Congratulations！すべての謎を解き明かした！<br>
-        下のボタンからぜひサークルへ参加してね！<br>
-        リアル脱出ゲームサークル(#real-d-game）</p>
-
-        <a id="slack-link" href="#" class="btn" target="_blank">サークルへの参加はこちら</a>
+        <p>Congratulations！すべての謎を解き明かした！<br>下のボタンからぜひサークルへ参加してね！<br>リアル脱出ゲームサークル(#real-d-game）</p>
+        <a id="slack-link" href="#" class="btn slack-btn" target="_blank" rel="noopener noreferrer">サークルへの参加はこちら</a>
     </div>
-
-
-    <!-- ------------ SECRET CLEAR ------------- -->
+    
+    <!-- ===== 裏クリア画面 ===== -->
     <div id="step-secret-clear" class="hidden">
         <h1 class="sparkle-text">裏クリア成功！</h1>
-        <p>すごい！目のつけどころがイイね！リアル脱出ゲームに向いているよ！<br>
-        下のボタンからぜひサークルへ参加してね！<br>
-        リアル脱出ゲームサークル(#real-d-game）</p>
-        <a id="secret-slack-link" href="#" class="btn" target="_blank">サークルのSlackへ</a>
+        <p style="font-size: 1.1em;">すごい！目のつけどころがイイね！リアル脱出ゲームに向いているよ！<br>ぜひサークルへ参加してね！<br>リアル脱出ゲームサークル(#real-d-game）</p>
+        <a id="secret-slack-link" href="#" class="btn slack-btn" target="_blank" rel="noopener noreferrer">サークルのSlackへ</a>
     </div>
 
 </div>
 
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-
     const config = {
-        step1Answers: [ "みみ", "こたえ", "こたえ", "いろは", "となかい", "れいぞうこ", "どせい" ],
+        step1Answers: [ "こたえ", "こたえ", "こたえ", "こたえ", "こたえ", "こたえ", "こたえ" ],
         step2Answer: "みくしいなぞとき",
         slackUrl: "https://mixigroup.enterprise.slack.com/archives/CKE9M28P8"
     };
@@ -300,63 +342,75 @@ document.addEventListener('DOMContentLoaded', function() {
     const step3 = document.getElementById('step3');
     const stepSecretClear = document.getElementById('step-secret-clear');
 
-    const inputs = Array.from({ length: 7 }, (_, i) => document.getElementById(`q${i + 1}`));
+    const step1Inputs = Array.from({ length: 7 }, (_, i) => document.getElementById(`q${i + 1}`));
     const feedbackMessage = document.getElementById('feedback-message');
     const summaryContainer = document.getElementById('step1-answers-summary');
 
     const finalInput = document.getElementById('final-q');
     const finalFeedbackMessage = document.getElementById('final-feedback-message');
+    
+    const slackLink = document.getElementById('slack-link');
+    const secretSlackLink = document.getElementById('secret-slack-link');
 
-    document.getElementById('slack-link').href = config.slackUrl;
-    document.getElementById('secret-slack-link').href = config.slackUrl;
+    slackLink.href = config.slackUrl;
+    secretSlackLink.href = config.slackUrl;
+    
+    // STEP1 判定
+    document.getElementById('check-step1').addEventListener('click', function() {
+        const userAnswers = step1Inputs.map(input => input.value.trim());
 
-    /* STEP1 判定 */
-    document.getElementById('check-step1').onclick = () => {
-        const userAnswers = inputs.map(i => i.value.trim());
-
-        // 裏クリア条件
-        if (userAnswers.every(a => a === "ひらがな")) {
-            step1.classList.add('hidden');
+        // 裏クリア
+        const isSecretClear = userAnswers.every(answer => answer === "ひらがな");
+        if (isSecretClear) {
             stepSecretClear.classList.remove('hidden');
+            step1.classList.add('hidden');   // 裏クリア時は完全に別画面
             return;
         }
 
-        const correct = config.step1Answers.map(a => a.toLowerCase());
-        const userLow = userAnswers.map(a => a.toLowerCase());
-
-        const wrong = [];
-        userLow.forEach((ans, idx) => {
-            if (ans !== correct[idx]) wrong.push(`謎${idx + 1}`);
-        });
-
-        if (wrong.length > 0) {
-            feedbackMessage.textContent = wrong.join("と") + "が違います。";
-            return;
+        const userAnswersLower = userAnswers.map(ans => ans.toLowerCase());
+        const correctAnswers = config.step1Answers.map(ans => ans.toLowerCase());
+        
+        const incorrectQuestions = [];
+        for (let i = 0; i < userAnswersLower.length; i++) {
+            if (userAnswersLower[i] !== correctAnswers[i]) {
+                incorrectQuestions.push(`謎${i + 1}`);
+            }
         }
 
-        // 正解 → 最終問題
-        let summary = '<h3>7つの謎の答え</h3><table class="summary-table">';
-        userAnswers.forEach((a, i) => summary += `<tr><th>謎${i+1}</th><td>${a}</td></tr>`);
-        summary += '</table>';
-        summaryContainer.innerHTML = summary;
+        if (incorrectQuestions.length === 0) {
+            // サマリー生成
+            let summaryHtml = '<h3>7つの謎の答え</h3><table class="summary-table">';
+            userAnswers.forEach((answer, index) => {
+                summaryHtml += `<tr><th>謎${index + 1}</th><td>${answer}</td></tr>`;
+            });
+            summaryHtml += '</table>';
+            summaryContainer.innerHTML = summaryHtml;
 
-        step1.classList.add('hidden');
-        step2.classList.remove('hidden');
-    };
+            // ★ STEP1はそのまま表示したまま、STEP2を下に出現させる
+            step2.classList.remove('hidden');
 
-    /* STEP2 判定 */
-    document.getElementById('check-step2').onclick = () => {
+            // 自動スクロールで最終問題へ誘導（任意）
+            step2.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-        const user = finalInput.value.trim().toLowerCase();
-        if (user === config.step2Answer.toLowerCase()) {
-            step2.classList.add('hidden');
+        } else {
+            feedbackMessage.textContent = `${incorrectQuestions.join('と')}が違います。`;
+        }
+    });
+
+    // STEP2 判定
+    document.getElementById('check-step2').addEventListener('click', function() {
+        const userAnswer = finalInput.value.trim().toLowerCase();
+        const correctAnswer = config.step2Answer.toLowerCase();
+
+        if (userAnswer === correctAnswer) {
             step3.classList.remove('hidden');
+            step2.classList.add('hidden');   // ここはお好みで。残したければこの行を消してもOK
+            step3.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
             finalFeedbackMessage.textContent = "答えが違うようです。";
-            setTimeout(() => finalFeedbackMessage.textContent = "", 1500);
+            setTimeout(() => { finalFeedbackMessage.textContent = ""; }, 1500);
         }
-    };
-
+    });
 });
 </script>
 
