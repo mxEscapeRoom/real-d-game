@@ -133,29 +133,6 @@
             border: 1px solid #555;
         }
 
-        /* --- STEP1答えサマリー --- */
-        #step1-answers-summary {
-            background-color: #1f1f1f;
-            border: 1px solid #444;
-            border-radius: 5px;
-            padding: 15px;
-            margin-top: 20px;
-            text-align: left;
-        }
-
-        .summary-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .summary-table th, .summary-table td {
-            padding: 8px;
-            border-bottom: 1px solid #333;
-        }
-        .summary-table th {
-            color: #00ffff;
-            width: 25%;
-        }
-
         /* --- ヒント --- */
         .hint-box {
             max-width: 90%;
@@ -281,11 +258,9 @@
         <div id="feedback-message"></div>
     </div>
 
-    <!-- ===== STEP2: 最終問題（最初は非表示、正解後に下に出る） ===== -->
+    <!-- ===== STEP2: 最終問題（正解後に下に出現） ===== -->
     <div id="step2" class="hidden">
         <h1>最終問題</h1>
-
-        <div id="step1-answers-summary"></div>
 
         <h3>最後の謎</h3>
         <p>この画像と7つの謎の答えを元に、最後のキーワードを導き出せ。</p>
@@ -332,7 +307,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const config = {
-        step1Answers: [ "こたえ", "こたえ", "こたえ", "こたえ", "こたえ", "こたえ", "こたえ" ],
+        step1Answers: [ "みみ", "こたえ", "こたえ", "いろは", "となかい", "れいぞうこ", "どせい" ],
         step2Answer: "みくしいなぞとき",
         slackUrl: "https://mixigroup.enterprise.slack.com/archives/CKE9M28P8"
     };
@@ -344,7 +319,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const step1Inputs = Array.from({ length: 7 }, (_, i) => document.getElementById(`q${i + 1}`));
     const feedbackMessage = document.getElementById('feedback-message');
-    const summaryContainer = document.getElementById('step1-answers-summary');
 
     const finalInput = document.getElementById('final-q');
     const finalFeedbackMessage = document.getElementById('final-feedback-message');
@@ -378,20 +352,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (incorrectQuestions.length === 0) {
-            // サマリー生成
-            let summaryHtml = '<h3>7つの謎の答え</h3><table class="summary-table">';
-            userAnswers.forEach((answer, index) => {
-                summaryHtml += `<tr><th>謎${index + 1}</th><td>${answer}</td></tr>`;
-            });
-            summaryHtml += '</table>';
-            summaryContainer.innerHTML = summaryHtml;
-
-            // ★ STEP1はそのまま表示したまま、STEP2を下に出現させる
+            // STEP1はそのまま、STEP2だけ下に出す
             step2.classList.remove('hidden');
-
-            // 自動スクロールで最終問題へ誘導（任意）
             step2.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
         } else {
             feedbackMessage.textContent = `${incorrectQuestions.join('と')}が違います。`;
         }
@@ -404,7 +367,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (userAnswer === correctAnswer) {
             step3.classList.remove('hidden');
-            step2.classList.add('hidden');   // ここはお好みで。残したければこの行を消してもOK
+            step2.classList.add('hidden');   // クリア後は最終問題を隠す（必要なければこの行を削除）
             step3.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
             finalFeedbackMessage.textContent = "答えが違うようです。";
