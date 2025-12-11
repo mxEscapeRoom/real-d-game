@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>クリスマスイベント リアル脱出ゲーム</title>
-    <!-- ★★★ アイデア1: 紙吹雪ライブラリの読み込み ★★★ -->
+    <!-- アイデア1: 紙吹雪ライブラリの読み込み -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <style>
         html, body {
@@ -32,8 +32,8 @@
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
             border: 1px solid rgba(0, 255, 255, 0.3);
-            position: relative; /* ★★★ 演出の基準位置にする ★★★ */
-            overflow: hidden;   /* ★★★ はみ出す演出を隠す ★★★ */
+            position: relative; 
+            overflow: hidden;   
         }
         h1, h2 {
             color: #00ffff;
@@ -147,7 +147,7 @@
         .slack-btn { background: linear-gradient(45deg, #4a154b, #36c5f0); color: white; font-weight: bold; }
         .slack-btn:hover { box-shadow: 0 5px 15px rgba(54, 197, 240, 0.4); }
 
-        /* ★★★ アイデア2: テキストアニメーション ★★★ */
+        /* アイデア2: テキストアニメーション */
         @keyframes pop-and-shine {
             0% { transform: scale(0.5); opacity: 0; }
             50% { transform: scale(1.2); opacity: 1; text-shadow: 0 0 15px #fff, 0 0 25px #ffdd77, 0 0 40px #00ffff; }
@@ -167,7 +167,7 @@
             50% { text-shadow: 0 0 20px #ffdd77, 0 0 30px #ffdd77, 0 0 40px #ffdd77; color: #ffdd77; }
         }
 
-        /* ★★★ アイデア3: 背景キラキラ演出 ★★★ */
+        /* アイデア3: 背景キラキラ演出 */
         .sparkle-wrapper {
             position: absolute;
             top: 0; left: 0;
@@ -235,15 +235,15 @@
     </div>
 
     <div id="step3" class="hidden">
-        <div class="sparkle-wrapper"></div> <!-- ★★★ キラキラ用のコンテナ ★★★ -->
-        <h1 class="cleared-title">CLEAR!</h1> <!-- ★★★ アニメーション用クラスを追加 ★★★ -->
+        <div class="sparkle-wrapper"></div> 
+        <h1 class="cleared-title">CLEAR!</h1>
         <p>Congratulations！すべての謎を解き明かした！<br>下のボタンからぜひサークルへ参加してね！<br>リアル脱出ゲームサークル(#real-d-game）</p>
         <a id="slack-link" href="#" class="btn slack-btn" target="_blank" rel="noopener noreferrer">サークルへの参加はこちら</a>
     </div>
     
     <div id="step-secret-clear" class="hidden">
-        <div class="sparkle-wrapper"></div> <!-- ★★★ キラキラ用のコンテナ ★★★ -->
-        <h1 class="sparkle-text cleared-title">裏クリア成功！</h1> <!-- ★★★ アニメーション用クラスを追加 ★★★ -->
+        <div class="sparkle-wrapper"></div>
+        <h1 class="sparkle-text cleared-title">裏クリア成功！</h1>
         <p style="font-size: 1.1em;">すごい！目のつけどころがイイね！リアル脱出ゲームに向いているよ！<br>ぜひサークルへ参加してね！<br>リアル脱出ゲームサークル(#real-d-game）</p>
         <a id="secret-slack-link" href="#" class="btn slack-btn" target="_blank" rel="noopener noreferrer">サークルのSlackへ</a>
     </div>
@@ -263,20 +263,18 @@ document.addEventListener('DOMContentLoaded', function() {
     slackLink.href = config.slackUrl;
     secretSlackLink.href = config.slackUrl;
 
-    // ★★★ アイデア1: 紙吹雪を降らせる関数 ★★★
     function launchConfetti() {
         confetti({ particleCount: 150, spread: 180, origin: { y: 0.6 } });
     }
 
-    // ★★★ アイデア3: キラキラ粒子を生成する関数 ★★★
     function createSparkles(containerSelector) {
         const container = document.querySelector(containerSelector);
-        if (!container || container.childElementCount > 0) return; // 既に生成済みなら中断
+        if (!container || container.childElementCount > 0) return;
         const numSparkles = 40;
         for (let i = 0; i < numSparkles; i++) {
             const sparkle = document.createElement('div');
             sparkle.className = 'sparkle';
-            const size = Math.random() * 3 + 1; // サイズを1〜4pxに
+            const size = Math.random() * 3 + 1;
             sparkle.style.width = `${size}px`;
             sparkle.style.height = `${size}px`;
             sparkle.style.left = `${Math.random() * 100}%`;
@@ -292,7 +290,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isSecretClear) {
             stepSecretClear.classList.remove('hidden');
             step1.classList.add('hidden');
-            // ★★★ 裏クリア時の演出を実行 ★★★
             launchConfetti();
             createSparkles('#step-secret-clear .sparkle-wrapper');
             return;
@@ -317,9 +314,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const userAnswer = finalInput.value.trim().toLowerCase();
         if (userAnswer === config.step2Answer.toLowerCase()) {
             step3.classList.remove('hidden');
-            step2.classList.add('hidden');
+            // step2.classList.add('hidden'); // ★★★ この行を削除（またはコメントアウト）しました ★★★
             step3.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            // ★★★ 通常クリア時の演出を実行 ★★★
             launchConfetti();
             createSparkles('#step3 .sparkle-wrapper');
         } else {
