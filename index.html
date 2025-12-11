@@ -38,8 +38,8 @@
 
         h1 {
             color: #00ffff;
-            margin-bottom: 25px;
             text-shadow: 0 0 10px #00ffff;
+            margin-bottom: 25px;
         }
 
         p {
@@ -120,50 +120,74 @@
             border: 1px solid #666;
         }
 
-        /* --- 隠す --- */
-        .hidden { display: none; }
+        /* --- ヒントボックス --- */
+        .hint-box {
+            max-width: 90%;
+            margin: 25px auto;
+            border: 1px dashed #666;
+            border-radius: 6px;
+            text-align: left;
+            overflow: hidden;
+        }
 
+        .hint-box summary {
+            cursor: pointer;
+            padding: 10px;
+            font-weight: bold;
+            color: #00ffff;
+            list-style: none;
+        }
 
-        /* ======================== */
-        /*   CLEAR 演出（豪華版）   */
-        /* ======================== */
+        .hint-box summary::before {
+            content: "▶ ";
+            font-size: 0.9em;
+        }
 
-        /* キラキラ背景エフェクト */
+        .hint-box[open] summary::before { content: "▼ "; }
+
+        .hint-content {
+            padding: 12px;
+            background-color: #1a1a1a;
+            border-top: 1px dashed #555;
+        }
+
+        .nested-hint-box summary {
+            color: #ffcc66;
+        }
+
+        /* --- CLEAR演出 --- */
         .clear-bg {
             position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            pointer-events: none;
+            top:0; left:0;
+            width:100vw;
+            height:100vh;
+            pointer-events:none;
             background: radial-gradient(circle, rgba(0,255,200,0.25), transparent 70%);
             animation: pulse 3s infinite;
-            z-index: 1;
+            z-index:1;
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.6; }
+            0%,100% { opacity:0.3; }
+            50% { opacity:0.6; }
         }
 
-        /* CLEAR テキストのフェードイン */
         .clear-title {
             animation: fadeIn 2s ease forwards, glow 2s infinite alternate;
             opacity: 0;
         }
-
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-
+        @keyframes fadeIn { to { opacity:1; } }
         @keyframes glow {
-            0% { text-shadow: 0 0 10px #00ffbf; }
-            100% { text-shadow: 0 0 30px #00ffbf, 0 0 50px #00ffee; }
+            0% { text-shadow:0 0 10px #00ffbf; }
+            100% { text-shadow:0 0 30px #00ffbf, 0 0 50px #00ffee; }
         }
+        .hidden { display:none; }
 
     </style>
 </head>
 <body>
 
-<div class="clear-bg hidden" id="clear-bg"></div>
+<div id="clear-bg" class="clear-bg hidden"></div>
 
 <div class="container">
 
@@ -192,10 +216,26 @@
     <!-- ステップ2 -->
     <div id="step2" class="hidden">
         <h1>最終問題</h1>
-        <img id="riddle-image" src="images/last.png">
-        <p>7つの答えを使って最後のキーワードを導き出せ。</p>
 
-        <input id="final-q" type="text" placeholder="入力してください…" style="margin-bottom:20px;">
+        <img src="images/last.png" id="riddle-image">
+
+        <p>この画像と 7つの謎の答えをもとに、最後のキーワードを導き出せ。</p>
+
+        <!-- ヒント復元（元コードと同じ構造） -->
+        <details class="hint-box">
+            <summary>ヒント</summary>
+            <div class="hint-content">
+                <p>色の違った○をどこかで見たことはないだろうか？7つの謎をもう一度見てみよう。</p>
+                <details class="nested-hint-box">
+                    <summary>さらにヒント</summary>
+                    <div class="hint-content">
+                        <p>丸の中の数字は何文字目かを表している。最初の文字は「み」。</p>
+                    </div>
+                </details>
+            </div>
+        </details>
+
+        <input id="final-q" type="text" placeholder="入力してください…" style="margin-top:20px; margin-bottom:20px;">
         <button id="check-step2" class="btn">最終回答</button>
         <div id="final-feedback-message"></div>
     </div>
@@ -204,13 +244,13 @@
     <!-- CLEAR -->
     <div id="step3" class="hidden">
         <h1 class="clear-title">CLEAR!!!</h1>
-        <p>Congratulations！あなたはすべての謎を解き明かした！</p>
+        <p>Congratulations！すべての謎を解き明かした！</p>
         <a id="slack-link" class="btn slack-btn" target="_blank">サークルへ参加する</a>
     </div>
 
     <!-- 裏クリア -->
     <div id="step-secret-clear" class="hidden">
-        <h1 class="sparkle-text">裏クリア成功！</h1>
+        <h1 class="clear-title">裏クリア成功！</h1>
         <p>すごい！あなたはリアル脱出ゲームに向いている！</p>
         <a id="secret-slack-link" class="btn slack-btn" target="_blank">サークルへ参加する</a>
     </div>
@@ -220,13 +260,13 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-    /* ===== 設定（ここだけ変えればOK） ===== */
+    /* ====== 設定 ====== */
     const config = {
         step1Answers: ["こたえ","こたえ","こたえ","こたえ","こたえ","こたえ","こたえ"],
         step2Answer: "みくしいなぞとき",
         slackUrl: "https://mixigroup.enterprise.slack.com/archives/CKE9M28P8"
     };
-    /* ======================================= */
+    /* ================= */
 
     const step1 = document.getElementById("step1");
     const step2 = document.getElementById("step2");
@@ -241,13 +281,14 @@ document.addEventListener("DOMContentLoaded", () => {
         q1, q2, q3, q4, q5, q6, q7
     ];
 
-    /* ======= ステップ1：個別判定 ======= */
+    /* --- ステップ1 個別判定 --- */
     document.getElementById("check-step1").onclick = () => {
 
         const answers = inputs.map(i => i.value.trim());
         const correct = config.step1Answers;
+        const incorrect = [];
 
-        // 裏クリア：全部「ひらがな」
+        // 裏クリア
         if (answers.every(a => a === "ひらがな")) {
             step1.classList.add("hidden");
             stepSecretClear.classList.remove("hidden");
@@ -255,37 +296,38 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // 個別判定
-        const incorrectList = [];
-        answers.forEach((ans, i) => {
-            if (ans.toLowerCase() !== correct[i].toLowerCase()) {
-                incorrectList.push(`謎${i+1}`);
+        answers.forEach((a, i) => {
+            if (a.toLowerCase() !== correct[i].toLowerCase()) {
+                incorrect.push(`謎${i+1}`);
             }
         });
 
-        if (incorrectList.length > 0) {
+        if (incorrect.length > 0) {
             document.getElementById("feedback-message").textContent =
-                incorrectList.join(" と ") + " が違います。";
+                incorrect.join(" と ") + " が違います。";
             return;
         }
 
-        // 全問正解 → 最終問題へ
+        // 正解 → 最終問題
         step1.classList.add("hidden");
         step2.classList.remove("hidden");
     };
 
 
-    /* ======= ステップ2：最終問題 ======= */
+    /* --- 最終判定 --- */
     document.getElementById("check-step2").onclick = () => {
 
         const final = document.getElementById("final-q").value.trim().toLowerCase();
 
         if (final !== config.step2Answer.toLowerCase()) {
             document.getElementById("final-feedback-message").textContent = "答えが違います。";
-            setTimeout(() => document.getElementById("final-feedback-message").textContent = "", 1500);
+            setTimeout(() => {
+                document.getElementById("final-feedback-message").textContent = "";
+            }, 1500);
             return;
         }
 
-        // CLEAR → 豪華演出
+        // CLEAR 演出
         step2.classList.add("hidden");
         step3.classList.remove("hidden");
         clearBg.classList.remove("hidden");
