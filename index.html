@@ -4,8 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>クリスマスイベント リアル脱出ゲーム</title>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YLYWL91EQE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-YLYWL91EQE');
+    </script>
+
     <!-- アイデア1: 紙吹雪ライブラリの読み込み -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
     <style>
         html, body {
             margin: 0;
@@ -256,15 +267,23 @@ document.addEventListener('DOMContentLoaded', function() {
         step2Answer: "みくしいなぞとき",
         slackUrl: "https://mixigroup.enterprise.slack.com/archives/CKE9M28P8"
     };
-    const step1 = document.getElementById('step1'), step2 = document.getElementById('step2'), step3 = document.getElementById('step3'), stepSecretClear = document.getElementById('step-secret-clear');
+    const step1 = document.getElementById('step1'),
+          step2 = document.getElementById('step2'),
+          step3 = document.getElementById('step3'),
+          stepSecretClear = document.getElementById('step-secret-clear');
     const step1Inputs = Array.from({ length: 7 }, (_, i) => document.getElementById(`q${i + 1}`));
-    const feedbackMessage = document.getElementById('feedback-message'), finalInput = document.getElementById('final-q'), finalFeedbackMessage = document.getElementById('final-feedback-message');
-    const slackLink = document.getElementById('slack-link'), secretSlackLink = document.getElementById('secret-slack-link');
+    const feedbackMessage = document.getElementById('feedback-message'),
+          finalInput = document.getElementById('final-q'),
+          finalFeedbackMessage = document.getElementById('final-feedback-message');
+    const slackLink = document.getElementById('slack-link'),
+          secretSlackLink = document.getElementById('secret-slack-link');
     slackLink.href = config.slackUrl;
     secretSlackLink.href = config.slackUrl;
 
     function launchConfetti() {
-        confetti({ particleCount: 150, spread: 180, origin: { y: 0.6 } });
+        if (typeof confetti === 'function') {
+            confetti({ particleCount: 150, spread: 180, origin: { y: 0.6 } });
+        }
     }
 
     function createSparkles(containerSelector) {
@@ -285,9 +304,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     document.getElementById('check-step1').addEventListener('click', function() {
+        // 参加開始イベント
+        if (typeof gtag === 'function') {
+            gtag('event', 'participated');
+        }
+
         const userAnswers = step1Inputs.map(input => input.value.trim());
         const isSecretClear = userAnswers.every(answer => answer === "ひらがな");
         if (isSecretClear) {
+            // 裏クリアイベント
+            if (typeof gtag === 'function') {
+                gtag('event', 'secret_clear');
+            }
+
             stepSecretClear.classList.remove('hidden');
             step1.classList.add('hidden');
             launchConfetti();
@@ -303,6 +332,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         if (incorrectQuestions.length === 0) {
+            // STEP1クリアイベント
+            if (typeof gtag === 'function') {
+                gtag('event', 'step1_clear');
+            }
+
             step2.classList.remove('hidden');
             step2.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
@@ -313,6 +347,11 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('check-step2').addEventListener('click', function() {
         const userAnswer = finalInput.value.trim().toLowerCase();
         if (userAnswer === config.step2Answer.toLowerCase()) {
+            // 最終問題クリアイベント
+            if (typeof gtag === 'function') {
+                gtag('event', 'final_clear');
+            }
+
             step3.classList.remove('hidden');
             // step2.classList.add('hidden'); // ★★★ この行を削除（またはコメントアウト）しました ★★★
             step3.scrollIntoView({ behavior: 'smooth', block: 'start' });
