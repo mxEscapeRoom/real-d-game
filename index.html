@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>クリスマスイベント リアル脱出ゲーム</title>
-    <!-- アイデア1: 紙吹雪ライブラリの読み込み -->
+
+    <!-- 紙吹雪ライブラリ -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
     <style>
         html, body {
             margin: 0;
@@ -21,7 +23,6 @@
             align-items: flex-start;
             text-align: center;
             padding: 20px;
-            box-sizing: border-box;
             min-height: 100vh;
         }
         .container {
@@ -30,10 +31,10 @@
             background-color: #2a2a2a;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            position: relative; 
-            overflow: hidden;   
+            box-shadow: 0 0 20px rgba(0,255,255,0.2);
+            border: 1px solid rgba(0,255,255,0.3);
+            position: relative;
+            overflow: hidden;
         }
         h1, h2 {
             color: #00ffff;
@@ -47,10 +48,8 @@
             margin-top: 30px;
             margin-bottom: 20px;
         }
-        p {
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
+        p { line-height: 1.6; }
+
         .question-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -64,7 +63,6 @@
         }
         .riddle-img {
             max-width: 100%;
-            height: auto;
             margin-bottom: 12px;
             border-radius: 5px;
             border: 1px solid #555;
@@ -76,44 +74,42 @@
             border: 1px solid #777;
             border-radius: 5px;
             color: #000;
-            font-size: 1em;
         }
-        input[type="text"]::placeholder { color: #666; }
-        input[type="text"]:focus {
+        input::placeholder { color:#666; }
+        input:focus {
             outline: none;
             border-color: #00ffff;
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            box-shadow: 0 0 10px rgba(0,255,255,0.5);
         }
+
         .btn {
-            display: inline-block;
             padding: 12px 30px;
             background: linear-gradient(45deg, #00ffff, #0077ff);
             color: #1a1a1a;
-            font-size: 1.1em;
             font-weight: bold;
-            text-decoration: none;
-            border: none;
             border-radius: 5px;
+            border: none;
             cursor: pointer;
         }
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+            box-shadow: 0 5px 15px rgba(0,255,255,0.4);
         }
+
         #feedback-message, #final-feedback-message {
             margin-top: 20px;
             color: #ff4d4d;
             font-weight: bold;
             min-height: 24px;
         }
+
         #riddle-image {
             max-width: 80%;
-            height: auto;
-            margin-top: 20px;
-            margin-bottom: 20px;
+            margin: 20px auto;
             border-radius: 5px;
             border: 1px solid #555;
         }
+
         .hint-box {
             max-width: 90%;
             margin: 30px auto;
@@ -128,208 +124,98 @@
             color: #00ffff;
             list-style: none;
         }
-        .hint-box summary::-webkit-details-marker { display: none; }
-        .hint-box summary::before { content: '▶ '; font-size: 0.8em; }
-        .hint-box[open] summary::before { content: '▼ '; }
-        .hint-box .hint-content {
-            padding: 0 15px 15px 15px;
+        .hint-box summary::before { content: "▶ "; }
+        .hint-box[open] summary::before { content: "▼ "; }
+
+        .hint-content {
+            padding: 15px;
             background-color: #1f1f1f;
             border-top: 1px dashed #555;
         }
-        .nested-hint-box {
-            margin-top: 15px;
-            background-color: #111;
-            border: 1px solid #444;
-            border-radius: 4px;
-        }
-        .nested-hint-box summary { color: #f0ad4e; font-weight: normal; font-size: 0.9em; }
-        .nested-hint-box .hint-content { border-top: 1px solid #444; font-size: 0.9em; }
-        .slack-btn { background: linear-gradient(45deg, #4a154b, #36c5f0); color: white; font-weight: bold; }
-        .slack-btn:hover { box-shadow: 0 5px 15px rgba(54, 197, 240, 0.4); }
 
-        /* アイデア2: テキストアニメーション */
-        @keyframes pop-and-shine {
-            0% { transform: scale(0.5); opacity: 0; }
-            50% { transform: scale(1.2); opacity: 1; text-shadow: 0 0 15px #fff, 0 0 25px #ffdd77, 0 0 40px #00ffff; }
-            100% { transform: scale(1); opacity: 1; text-shadow: 0 0 5px #fff, 0 0 10px #ffdd77; }
-        }
-        .cleared-title {
-            animation: pop-and-shine 1.5s ease-out forwards;
-        }
-
-        .sparkle-text {
-            font-size: 2em;
-            font-weight: bold;
-            animation: sparkle 2s infinite;
-        }
-        @keyframes sparkle {
-            0%, 100% { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ffdd77; color: #fff; }
-            50% { text-shadow: 0 0 20px #ffdd77, 0 0 30px #ffdd77, 0 0 40px #ffdd77; color: #ffdd77; }
-        }
-
-        /* アイデア3: 背景キラキラ演出 */
         .sparkle-wrapper {
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            overflow: hidden;
+            inset: 0;
             pointer-events: none;
-        }
-        .sparkle {
-            position: absolute;
-            bottom: -50px;
-            background: white;
-            border-radius: 50%;
-            opacity: 0;
-            animation: sparkle-up linear infinite;
-        }
-        @keyframes sparkle-up {
-            0% { transform: translateY(0); opacity: 0; }
-            20%, 80% { opacity: 1; }
-            100% { transform: translateY(-250px); opacity: 0; }
         }
 
         .hidden { display:none; }
-        @media (max-width: 768px) { body { align-items: flex-start; } }
+
+        .cleared-title {
+            animation: pop 1.5s ease-out forwards;
+        }
+        @keyframes pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .credit-text {
+            margin-top: 24px;
+            font-size: 0.75em;
+            color: #aaa;
+        }
     </style>
 </head>
+
 <body>
 <div class="container">
+
+    <!-- STEP1 -->
     <div id="step1">
         <h1>リアル脱出ゲームサークルからの挑戦状</h1>
-        <p>7つの謎を解き明かし、答えを入力せよ。<br>※答えはすべて<strong>ひらがな</strong> を入力してください。</p>
+        <p>7つの謎を解き明かし、答えを入力せよ。<br>
+        ※答えはすべて<strong>ひらがな</strong></p>
+
         <div class="question-grid">
-            <div class="question-item"><img class="riddle-img" src="images/q1.png" alt="謎1の画像"><input type="text" id="q1" name="q1" placeholder="入力してください…"></div>
-            <div class="question-item"><img class="riddle-img" src="images/q2.png" alt="謎2の画像"><input type="text" id="q2" name="q2" placeholder="入力してください…"></div>
-            <div class="question-item"><img class="riddle-img" src="images/q3.png" alt="謎3の画像"><input type="text" id="q3" name="q3" placeholder="入力してください…"></div>
-            <div class="question-item"><img class="riddle-img" src="images/q4.png" alt="謎4の画像"><input type="text" id="q4" name="q4" placeholder="入力してください…"></div>
-            <div class="question-item"><img class="riddle-img" src="images/q5.png" alt="謎5の画像"><input type="text" id="q5" name="q5" placeholder="入力してください…"></div>
-            <div class="question-item"><img class="riddle-img" src="images/q6.png" alt="謎6の画像"><input type="text" id="q6" name="q6" placeholder="入力してください…"></div>
-            <div class="question-item"><img class="riddle-img" src="images/q7.png" alt="謎7の画像"><input type="text" id="q7" name="q7" placeholder="入力してください…"></div>
+            <div class="question-item"><img class="riddle-img" src="images/q1.png"><input id="q1" placeholder="入力してください…"></div>
+            <div class="question-item"><img class="riddle-img" src="images/q2.png"><input id="q2" placeholder="入力してください…"></div>
+            <div class="question-item"><img class="riddle-img" src="images/q3.png"><input id="q3" placeholder="入力してください…"></div>
+            <div class="question-item"><img class="riddle-img" src="images/q4.png"><input id="q4" placeholder="入力してください…"></div>
+            <div class="question-item"><img class="riddle-img" src="images/q5.png"><input id="q5" placeholder="入力してください…"></div>
+            <div class="question-item"><img class="riddle-img" src="images/q6.png"><input id="q6" placeholder="入力してください…"></div>
+            <div class="question-item"><img class="riddle-img" src="images/q7.png"><input id="q7" placeholder="入力してください…"></div>
         </div>
+
         <button id="check-step1" class="btn">回答を送信</button>
         <div id="feedback-message"></div>
     </div>
 
+    <!-- STEP2 -->
     <div id="step2" class="hidden">
         <h1>最終問題</h1>
-        <h3>最後の謎</h3>
         <p>この画像と7つの謎を元に、最後のキーワードを導き出せ。</p>
-        <img id="riddle-image" src="images/last.png" alt="謎の画像">
-        <details class="hint-box">
-            <summary>ヒント</summary>
-            <div class="hint-content">
-                <p>7つの謎をもう一度よーくみてみよう。色のついた◯があるはず。丸の中の数字は何個目かを表している。</p>
-                <details class="nested-hint-box">
-                    <summary>最後の言葉がわからない？</summary>
-                    <div class="hint-content"><p>◯の色をよく見てみよう。</p></div>
-                </details>
-            </div>
-        </details>
-        <div class="question-item" style="max-width: 300px; margin: 0 auto 30px auto;">
-            <label for="final-q">最後のキーワード</label>
-            <input type="text" id="final-q" name="final-q" placeholder="入力してください…">
+        <img id="riddle-image" src="images/last.png">
+
+        <div class="question-item" style="max-width:300px;margin:0 auto;">
+            <input id="final-q" placeholder="入力してください…">
         </div>
+
         <button id="check-step2" class="btn">最終回答</button>
         <div id="final-feedback-message"></div>
     </div>
 
+    <!-- CLEAR -->
     <div id="step3" class="hidden">
-        <div class="sparkle-wrapper"></div> 
-        <h1 class="cleared-title">CLEAR!</h1>
-        <p>Congratulations！すべての謎を解き明かした！<br>下のボタンからぜひサークルへ参加してね！<br>リアル脱出ゲームサークル(#real-d-game）</p>
-        <a id="slack-link" href="#" class="btn slack-btn" target="_blank" rel="noopener noreferrer">サークルへの参加はこちら</a>
-    </div>
-    
-    <div id="step-secret-clear" class="hidden">
         <div class="sparkle-wrapper"></div>
-        <h1 class="sparkle-text cleared-title">裏クリア成功！</h1>
-        <p style="font-size: 1.1em;">すごい！目のつけどころがイイね！リアル脱出ゲームに向いているよ！<br>ぜひサークルへ参加してね！<br>リアル脱出ゲームサークル(#real-d-game）</p>
-        <a id="secret-slack-link" href="#" class="btn slack-btn" target="_blank" rel="noopener noreferrer">サークルのSlackへ</a>
+        <h1 class="cleared-title">CLEAR!</h1>
+        <p>Congratulations！すべての謎を解き明かした！</p>
+        <a id="slack-link" class="btn">サークルへの参加はこちら</a>
+
+        <p class="credit-text">
+            謎制作：masanori.kashiwa, hikaru.kaneko, rie.kudo, takashi.tokai, yurie.ninagawa, takashi.mitsui
+        </p>
     </div>
+
+    <!-- SECRET CLEAR -->
+    <div id="step-secret-clear" class="hidden">
+        <h1 class="cleared-title">裏クリア成功！</h1>
+        <p>すごい！目のつけどころがイイね！</p>
+
+        <p class="credit-text">
+            謎制作：masanori.kashiwa, hikaru.kaneko, rie.kudo, takashi.tokai, yurie.ninagawa, takashi.mitsui
+        </p>
+    </div>
+
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const config = {
-        step1Answers: [ "みみ", "くりすます", "しみ", "いろは", "となかい", "れいぞうこ", "どせい" ],
-        step2Answer: "みくしいなぞとき",
-        slackUrl: "https://mixigroup.enterprise.slack.com/archives/CKE9M28P8"
-    };
-    const step1 = document.getElementById('step1'), 
-          step2 = document.getElementById('step2'), 
-          step3 = document.getElementById('step3'), 
-          stepSecretClear = document.getElementById('step-secret-clear');
-    const step1Inputs = Array.from({ length: 7 }, (_, i) => document.getElementById(`q${i + 1}`));
-    const feedbackMessage = document.getElementById('feedback-message'), 
-          finalInput = document.getElementById('final-q'), 
-          finalFeedbackMessage = document.getElementById('final-feedback-message');
-    const slackLink = document.getElementById('slack-link'), 
-          secretSlackLink = document.getElementById('secret-slack-link');
-    slackLink.href = config.slackUrl;
-    secretSlackLink.href = config.slackUrl;
-
-    function launchConfetti() {
-        confetti({ particleCount: 150, spread: 180, origin: { y: 0.6 } });
-    }
-
-    function createSparkles(containerSelector) {
-        const container = document.querySelector(containerSelector);
-        if (!container || container.childElementCount > 0) return;
-        const numSparkles = 40;
-        for (let i = 0; i < numSparkles; i++) {
-            const sparkle = document.createElement('div');
-            sparkle.className = 'sparkle';
-            const size = Math.random() * 3 + 1;
-            sparkle.style.width = `${size}px`;
-            sparkle.style.height = `${size}px`;
-            sparkle.style.left = `${Math.random() * 100}%`;
-            sparkle.style.animationDuration = `${2 + Math.random() * 3}s`;
-            sparkle.style.animationDelay = `${Math.random() * 5}s`;
-            container.appendChild(sparkle);
-        }
-    }
-    
-    document.getElementById('check-step1').addEventListener('click', function() {
-        const userAnswers = step1Inputs.map(input => input.value.trim());
-        const isSecretClear = userAnswers.every(answer => answer === "ひらがな");
-        if (isSecretClear) {
-            stepSecretClear.classList.remove('hidden');
-            step1.classList.add('hidden');
-            launchConfetti();
-            createSparkles('#step-secret-clear .sparkle-wrapper');
-            return;
-        }
-        const userAnswersLower = userAnswers.map(ans => ans.toLowerCase());
-        const correctAnswers = config.step1Answers.map(ans => ans.toLowerCase());
-        const incorrectQuestions = [];
-        for (let i = 0; i < userAnswersLower.length; i++) {
-            if (userAnswersLower[i] !== correctAnswers[i]) {
-                incorrectQuestions.push(`謎${i + 1}`);
-            }
-        }
-        if (incorrectQuestions.length === 0) {
-            step2.classList.remove('hidden');
-            step2.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
-            feedbackMessage.textContent = `${incorrectQuestions.join('と')}が違います。`;
-        }
-    });
-
-    document.getElementById('check-step2').addEventListener('click', function() {
-        const userAnswer = finalInput.value.trim().toLowerCase();
-        if (userAnswer === config.step2Answer.toLowerCase()) {
-            step3.classList.remove('hidden');
-            // step2.classList.add('hidden'); // 必要なら再度隠す
-            step3.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            launchConfetti();
-            createSparkles('#step3 .sparkle-wrapper');
-        } else {
-            finalFeedbackMessage.textContent = "答えが違うようです。";
-            setTimeout(() => { finalFeedbackMessage.textContent = ""; }, 1500);
-        }
-    });
-});
-</script>
 </body>
 </html>
