@@ -67,6 +67,7 @@
             border-radius: 5px;
             border: 1px solid #555;
         }
+
         input[type="text"] {
             width: 100%;
             padding: 12px;
@@ -74,8 +75,9 @@
             border: 1px solid #777;
             border-radius: 5px;
             color: #000;
-            font-size: 1em;        /* ← これを追加 */
-            line-height: 1.4;     /* ← 視認性アップ */
+            font-size: 1em;
+            line-height: 1.4;
+            box-sizing: border-box;
         }
         input::placeholder { color:#666; }
         input:focus {
@@ -112,35 +114,6 @@
             border: 1px solid #555;
         }
 
-        .hint-box {
-            max-width: 90%;
-            margin: 30px auto;
-            border: 1px dashed #555;
-            border-radius: 5px;
-            text-align: left;
-        }
-        .hint-box summary {
-            cursor: pointer;
-            padding: 10px;
-            font-weight: bold;
-            color: #00ffff;
-            list-style: none;
-        }
-        .hint-box summary::before { content: "▶ "; }
-        .hint-box[open] summary::before { content: "▼ "; }
-
-        .hint-content {
-            padding: 15px;
-            background-color: #1f1f1f;
-            border-top: 1px dashed #555;
-        }
-
-        .sparkle-wrapper {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-        }
-
         .hidden { display:none; }
 
         .cleared-title {
@@ -169,13 +142,34 @@
         ※答えはすべて<strong>ひらがな</strong></p>
 
         <div class="question-grid">
-            <div class="question-item"><img class="riddle-img" src="images/q1.png"><input id="q1" placeholder="入力してください…"></div>
-            <div class="question-item"><img class="riddle-img" src="images/q2.png"><input id="q2" placeholder="入力してください…"></div>
-            <div class="question-item"><img class="riddle-img" src="images/q3.png"><input id="q3" placeholder="入力してください…"></div>
-            <div class="question-item"><img class="riddle-img" src="images/q4.png"><input id="q4" placeholder="入力してください…"></div>
-            <div class="question-item"><img class="riddle-img" src="images/q5.png"><input id="q5" placeholder="入力してください…"></div>
-            <div class="question-item"><img class="riddle-img" src="images/q6.png"><input id="q6" placeholder="入力してください…"></div>
-            <div class="question-item"><img class="riddle-img" src="images/q7.png"><input id="q7" placeholder="入力してください…"></div>
+            <div class="question-item">
+                <img class="riddle-img" src="images/q1.png">
+                <input type="text" id="q1" placeholder="入力してください…">
+            </div>
+            <div class="question-item">
+                <img class="riddle-img" src="images/q2.png">
+                <input type="text" id="q2" placeholder="入力してください…">
+            </div>
+            <div class="question-item">
+                <img class="riddle-img" src="images/q3.png">
+                <input type="text" id="q3" placeholder="入力してください…">
+            </div>
+            <div class="question-item">
+                <img class="riddle-img" src="images/q4.png">
+                <input type="text" id="q4" placeholder="入力してください…">
+            </div>
+            <div class="question-item">
+                <img class="riddle-img" src="images/q5.png">
+                <input type="text" id="q5" placeholder="入力してください…">
+            </div>
+            <div class="question-item">
+                <img class="riddle-img" src="images/q6.png">
+                <input type="text" id="q6" placeholder="入力してください…">
+            </div>
+            <div class="question-item">
+                <img class="riddle-img" src="images/q7.png">
+                <input type="text" id="q7" placeholder="入力してください…">
+            </div>
         </div>
 
         <button id="check-step1" class="btn">回答を送信</button>
@@ -189,7 +183,7 @@
         <img id="riddle-image" src="images/last.png">
 
         <div class="question-item" style="max-width:300px;margin:0 auto;">
-            <input id="final-q" placeholder="入力してください…">
+            <input type="text" id="final-q" placeholder="入力してください…">
         </div>
 
         <button id="check-step2" class="btn">最終回答</button>
@@ -198,10 +192,8 @@
 
     <!-- CLEAR -->
     <div id="step3" class="hidden">
-        <div class="sparkle-wrapper"></div>
         <h1 class="cleared-title">CLEAR!</h1>
         <p>Congratulations！すべての謎を解き明かした！</p>
-        <a id="slack-link" class="btn">サークルへの参加はこちら</a>
 
         <p class="credit-text">
             謎制作：masanori.kashiwa, hikaru.kaneko, rie.kudo, takashi.tokai, yurie.ninagawa, takashi.mitsui
